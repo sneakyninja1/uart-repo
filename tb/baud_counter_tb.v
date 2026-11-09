@@ -11,16 +11,13 @@ module module_name_tb;
     reg enable; 
     wire next_bit; 
 
-
     // 2. Instantiate the design under test (DUT)
-
     baud_counter dut (
         .clk(clk),
         .reset(reset),
         .enable(enable),
         .next_bit(next_bit)
     );
-
 
     // 3. Generate the clock
     // Example: 20 ns period = 50 MHz
@@ -30,14 +27,10 @@ module module_name_tb;
 
 
     // 4. Save waveforms
-
     initial begin
         $dumpfile("simulation.vcd");
         $dumpvars(0, module_name_tb);
     end
-
-
-    // 5. Apply inputs and run test cases
 
     initial begin
         // A. Initialize EVERY input to a known value.
@@ -50,10 +43,11 @@ module module_name_tb;
         //Test Case 1: Asserting reset 
         @(posedge clk); 
         #1; 
-        if (next_bit !== 1'b0)
+        if (next_bit !== 1'b0) begin 
             $display("FAIL: Next bit does not have correct value. Test 1 unsuccessful."); 
-        else 
-            $display("PASS: Test Case 1 successful."); 
+            $finish; 
+        end 
+        $display("PASS: Test Case 1 successful."); 
         
         // Test Case 2: Reset is released 
         @(negedge clk); 
@@ -83,14 +77,97 @@ module module_name_tb;
             $display("FAIL: Next bit does not have the correct value. Test 2 unsuccessful."); 
             $finish; 
         end 
-        
+
         $display("PASS: Test Case 2 Successful."); 
         
-        //Test Case 3: 
+        //Test Case 3: Clear while counting 
+        @(negedge clk); 
+        #1; 
+        enable = 1'b0; 
 
+        @(posedge clk); 
+        #1; 
+        if (next_bit !== 1'b0) begin 
+            $display("FAIL: Next bit does not have the correct value. Test 3 unsuccessful."); 
+            $finish; 
+        end 
 
-        // D. Repeat for other cases and boundaries.
+        @(negedge clk); 
+        enable = 1'b1; 
 
+        repeat(5207) begin 
+            @(posedge clk); 
+            #1; 
+            if (next_bit !== 1'b1) begin 
+                $display("FAIL: Next bit does not have the correct value. Test 3 unsuccessful."); 
+                $finish; 
+            end 
+        end
+
+        @(posedge clk); 
+        #1; 
+
+        if (next_bit !== 1'b1) begin
+            $display("FAIL: Expected pulse at cycle 5208 after re-enabling.");
+            $finish;
+        end
+
+        $display("PASS: Test 3 successful."); 
+        
+        //Test Case 4: Reset while counting 
+        reset = 1'b0; 
+        repeat (100) @(posedge clk); 
+
+        @(negedge clk); 
+        reset = 1'b1; 
+
+        @(posedge clk); 
+        #1; 
+        if (next_bit !== 1'b0) begin 
+            $display("FAIL: Next bit does not have the correct value. Test 4 unsuccessful."); 
+            $finish; 
+        end 
+        
+        @(negedge clk); 
+        reset = 1'b0; 
+        repeat(5207) begin 
+            @(posedge clk); 
+            #1; 
+            if (next_bit !== 1'b0) begin 
+                $display("FAIL: Next bit does not have the correct value. Test 4 unsuccessful."); 
+                $finish; 
+            end 
+        end
+
+        @(posedge clk); 
+        #1; 
+        if (next_bit !== 1'b1) begin
+            $display("FAIL: Expected pulse at cycle 5208 after releasing reset.");
+            $finish;
+        end
+
+        $display("PASS: Test 4 successful."); 
+
+        //Test Case 5: Repeated pulses 
+        repeat (3) begin 
+            repeat (5207) begin 
+                @(posedge clk); 
+                #1; 
+                if (next_bit !== 1'b0) begin 
+                $display("FAIL: Next bit does not have the correct value. Test 4 unsuccessful."); 
+                $finish; 
+            end 
+            end 
+
+            @(posedge clk); 
+            #1; 
+            if (next_bit !== 1'b1) begin
+                $display("FAIL: Expected pulse at cycle 5208 after releasing reset.");
+                $finish;
+            end
+        end
+
+        $display("PASS: Test 5 successful."); 
         // E. End the simulation.
         $finish;
     end

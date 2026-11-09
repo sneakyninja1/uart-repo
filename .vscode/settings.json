@@ -1,0 +1,3 @@
+{"verilog.linting.iverilog.runAtFileLocation": false,
+"verilog.linting.iverilog.arguments": "-y rtl"
+}
