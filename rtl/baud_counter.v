@@ -8,7 +8,7 @@
 //UART baud rate = 9600 bits/second
 //Clock cycles per bit = 50 M/9600 = 5208.33
 
-module baud_counter(enable, clk, reset, next_bit) 
+module baud_counter(enable, clk, reset, next_bit); 
     input enable; 
     input clk, reset; 
     output reg next_bit;
