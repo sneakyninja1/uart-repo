@@ -42,16 +42,15 @@ module module_name_tb;
     initial begin
         // A. Initialize EVERY input to a known value.
         enable = 1'b1; 
+        reset  = 1'b1; 
 
         // B. Allow reset to take effect.
         repeat (2) @(negedge clk);
-        reset = 1'b0;
 
         //Test Case 1: Asserting reset 
-        reset = 1'b1; 
         @(posedge clk); 
         #1; 
-        if (next_bit != 1'b0)
+        if (next_bit !== 1'b0)
             $display("FAIL: Next bit does not have correct value. Test 1 unsuccessful."); 
         else 
             $display("PASS: Test Case 1 successful."); 
@@ -61,23 +60,31 @@ module module_name_tb;
         reset = 1'b0; 
         enable = 1'b1; 
 
-        repeat 5207 @(posedge clk); 
-        #1; 
-        if (next_bit != 1'b0)
-            $display("FAIL: Next bit does not have the correct value. Test 2 unsucessful."); 
-
+        repeat (5207) begin 
+            @(posedge clk); 
+            #1; 
+            if (next_bit !== 1'b0) begin
+                $display("FAIL: Next bit does not have the correct value. Test 2 unsucessful."); 
+                $finish; 
+            end
+        end 
+        //Edge 5208: Should pulse 
         @(posedge clk); 
         #1; 
-        if (next_bit != 1'b1) 
+        if (next_bit !== 1'b1) begin
             $display("FAIL: Next bit does not have the correct value after 5208 cycles. Test 2 unsuccessful"); 
-        
+            $finish; 
+        end 
+
+        //Edge 5209: Pulse ended 
         @(posedge clk); 
         #1; 
-        if (next_bit != 1'b0)
+        if (next_bit !== 1'b0) begin 
             $display("FAIL: Next bit does not have the correct value. Test 2 unsuccessful."); 
-        else
-            $display("PASS: Test Case 2 Successful."); 
-     
+            $finish; 
+        end 
+        
+        $display("PASS: Test Case 2 Successful."); 
         
         //Test Case 3: 
 
