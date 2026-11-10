@@ -29,7 +29,7 @@ module baud_counter_tb;
     // 4. Save waveforms
     initial begin
         $dumpfile("simulation.vcd");
-        $dumpvars(0, module_name_tb);
+        $dumpvars(0, baud_counter_tb);
     end
 
     initial begin
