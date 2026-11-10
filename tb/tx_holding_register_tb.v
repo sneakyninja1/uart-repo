@@ -70,20 +70,20 @@ module tx_holding_register_tb;
             $display("FAIL: Data out does not match data in. Should also be full. Test 2 unsuccessful."); 
             $finish; 
         end 
-        $display("PASS: Test Case 2 successfull"); 
+        $display("PASS: Test Case 2 successful"); 
 
         // Test Case 3: Set load to 0 and try changing data_in 
         @(negedge clk); 
         load = 1'b0; 
         data_in = 8'hA1; 
 
-        @(posedge clk) 
+        @(posedge clk); 
         #1; 
-        if ((data_out !== 8'hA3) || (full == 1'b0)) begin 
+        if ((data_out !== 8'hA3) || (full !== 1'b1)) begin 
             $display("FAIL: Data out and full should remain the same. Test 3 unsuccessful."); 
             $finish; 
         end 
-        $display("PASS: Test Case 3 succesfull"); 
+        $display("PASS: Test Case 3 succesful"); 
 
         //Test Case 4: Try Loading another variable while full 
         @(negedge clk); 
@@ -96,10 +96,10 @@ module tx_holding_register_tb;
             $display("FAIL: Data out should remain the same since transmitter is already full. Test 4 unsuccessful."); 
             $finish; 
         end 
-        $display("PASS: Test Case 4 successfull."); 
+        $display("PASS: Test Case 4 successful."); 
 
         //Test Case 5: Consume without loading 
-        @(negedge clk)
+        @(negedge clk); 
         consume = 1'b1; 
         load = 1'b0; 
 
@@ -109,7 +109,7 @@ module tx_holding_register_tb;
             $display("FAIL: Should not be full. The stored bits should remain unchanged. Test 5 unsuccessful."); 
             $finish; 
         end 
-        $display("PASS: Test Case 5 succesfull"); 
+        $display("PASS: Test Case 5 succesful"); 
 
         //Test Case 6: Load, then consume and load together 
         @(negedge clk); 
