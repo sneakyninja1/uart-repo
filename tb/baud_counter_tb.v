@@ -98,7 +98,7 @@ module module_name_tb;
         repeat(5207) begin 
             @(posedge clk); 
             #1; 
-            if (next_bit !== 1'b1) begin 
+            if (next_bit !== 1'b0) begin 
                 $display("FAIL: Next bit does not have the correct value. Test 3 unsuccessful."); 
                 $finish; 
             end 
