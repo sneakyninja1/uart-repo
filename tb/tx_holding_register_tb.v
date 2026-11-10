@@ -35,7 +35,7 @@ module tx_holding_register_tb;
     // 4. Save waveforms
     initial begin
         $dumpfile("simulation.vcd");
-        $dumpvars(0, tx_holding_register);
+        $dumpvars(0, tx_holding_register_tb);
     end
 
     initial begin
@@ -113,16 +113,27 @@ module tx_holding_register_tb;
 
         //Test Case 6: Load, then consume and load together 
         @(negedge clk); 
-        data_in = 8'h11; 
-        consume = 1'b1; 
+        data_in = 8'h55; 
         load = 1'b1; 
+        consume = 1'b0; 
 
         @(posedge clk); 
         #1; 
-        if ((data_out !== 8'h11) || (full !== 1'b1)) begin 
+        if ((data_out !== 8'h55) || (full !== 1'b1)) begin 
             $display("FAIL: Data out does not have the correct value. Register should be full. Test 6 unsuccessful"); 
             $finish; 
         end 
+
+        @(negedge clk); 
+        consume = 1'b1; 
+        data_in = 8'h11; 
+        @(posedge clk); 
+        #1; 
+        if ((data_out !== 8'11) || (full !== 1'b1)) begin 
+            $display("FAIL: Data out does not have the correct value. Register should be full. Test 6 unsuccessful"); 
+            $finish; 
+        end 
+        
         $display("PASS: Test Case 6 successful."); 
 
         //Test Case 7: Reset while full, with load, and consume high 
