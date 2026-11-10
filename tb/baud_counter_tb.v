@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module module_name_tb;
+module baud_counter_tb;
 
     // 1. Declare signals
     // DUT inputs: reg (the testbench drives them)
