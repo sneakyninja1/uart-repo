@@ -129,8 +129,8 @@ module tx_holding_register_tb;
         data_in = 8'h11; 
         @(posedge clk); 
         #1; 
-        if ((data_out !== 8'11) || (full !== 1'b1)) begin 
-            $display("FAIL: Data out does not have the correct value. Register should be full. Test 6 unsuccessful"); 
+        if ((data_out !== 8'h11) || (full !== 1'b1)) begin 
+            $display("FAIL: Data out does not have the correct value. egister should be full. Test 6 unsuccessful"); 
             $finish; 
         end 
         
