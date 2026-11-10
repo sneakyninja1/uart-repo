@@ -29,7 +29,7 @@ module tx_holding_register_tb;
     // Example: 20 ns period = 50 MHz
 
     initial clk = 1'b0;
-    always #20 clk = ~clk;
+    always #10 clk = ~clk;
 
 
     // 4. Save waveforms
@@ -41,6 +41,10 @@ module tx_holding_register_tb;
     initial begin
         // A. Initialize EVERY input to a known value.
         reset  = 1'b1; 
+        consume = 1'b0; 
+        load = 1'b0; 
+        data_in = 8'h00; 
+
 
         // B. Allow reset to take effect.
         repeat (2) @(negedge clk);
@@ -48,7 +52,7 @@ module tx_holding_register_tb;
         //Test Case 1: Asserting reset 
         @(posedge clk); 
         #1; 
-        if (data_out!== 8'b0 && full !== 1'b0) begin 
+        if ((data_out!== 8'h00)|| (full !== 1'b0)) begin 
             $display("FAIL: Data out and full do not have the correct values. Test 1 unsuccessful."); 
             $finish; 
         end 
@@ -62,7 +66,7 @@ module tx_holding_register_tb;
 
         @(posedge clk); 
         #1; 
-        if (data_out !== 8'hA3 && full !== 1'b1) begin 
+        if ((data_out !== 8'hA3) || (full !== 1'b1)) begin 
             $display("FAIL: Data out does not match data in. Should also be full. Test 2 unsuccessful."); 
             $finish; 
         end 
@@ -75,7 +79,7 @@ module tx_holding_register_tb;
 
         @(posedge clk) 
         #1; 
-        if (data_out == data_in && full == 1'b0) begin 
+        if ((data_out !== 8'hA3) || (full == 1'b0)) begin 
             $display("FAIL: Data out and full should remain the same. Test 3 unsuccessful."); 
             $finish; 
         end 
@@ -88,7 +92,7 @@ module tx_holding_register_tb;
 
         @(posedge clk); 
         #1; 
-        if (data_out == 8'hB9 && full !== 1'b1) begin 
+        if ((data_out !== 8'hA3) || (full !== 1'b1)) begin 
             $display("FAIL: Data out should remain the same since transmitter is already full. Test 4 unsuccessful."); 
             $finish; 
         end 
@@ -101,7 +105,7 @@ module tx_holding_register_tb;
 
         @(posedge clk); 
         #1; 
-        if (data_in !== 8'hB9 && full !== 1'b0) begin
+        if ((data_out !== 8'hA3) || (full !== 1'b0)) begin
             $display("FAIL: Should not be full. The stored bits should remain unchanged. Test 5 unsuccessful."); 
             $finish; 
         end 
@@ -115,7 +119,7 @@ module tx_holding_register_tb;
 
         @(posedge clk); 
         #1; 
-        if (data_out !== data_in && full !== 1'b1) begin 
+        if ((data_out !== 8'h11) || (full !== 1'b1)) begin 
             $display("FAIL: Data out does not have the correct value. Register should be full. Test 6 unsuccessful"); 
             $finish; 
         end 
@@ -124,9 +128,14 @@ module tx_holding_register_tb;
         //Test Case 7: Reset while full, with load, and consume high 
         @(negedge clk); 
         reset = 1'b1; 
-        
 
-
+        @(posedge clk); 
+        #1; 
+        if ((data_out !== 8'h00) || (full !== 1'b0)) begin 
+            $display("FAIL: Data out and full should be cleared upon reset. Test 7 unsuccessful."); 
+            $finish; 
+        end 
+        $display("PASS: Test Case 7 successful."); 
         
         // E. End the simulation.
         $finish;
