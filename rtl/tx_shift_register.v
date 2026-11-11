@@ -20,5 +20,5 @@ module tx_shift_register(clk, reset, load, data_in, shift, serial_out);
         shift_reg <= {1'b1, shift_reg[7:1]}; 
 
     end 
-
+    
 endmodule 
