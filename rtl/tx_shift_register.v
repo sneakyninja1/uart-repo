@@ -9,24 +9,16 @@ module tx_shift_register(clk, reset, load, data_in, shift, serial_out);
 
     reg [7:0] shift_reg; // Internal storage; holds the byte being transmitted.
 
-    assign serial_out <= shift_reg[0]; 
+    assign serial_out = shift_reg[0]; 
     
     always @(posedge clk) begin 
     if (reset)  
         shift_reg <= 8'hFF; 
-    else if (load) begin 
+    else if (load)  
         shift_reg <= data_in; 
-
     else if (shift) 
         shift_reg <= {1'b1, shift_reg[7:1]}; 
 
-    else if (hold)
-        shift_reg = shift_reg; 
-
     end 
-
-
-
-
 
 endmodule 
