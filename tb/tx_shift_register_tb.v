@@ -41,7 +41,7 @@ module tx_shift_register_tb();
         reset  = 1'b1; 
         load = 1'b0; 
         data_in = 8'hFF; 
-
+        shift = 1'b0; 
 
         // B. Allow reset to take effect.
         repeat (2) @(negedge clk);
@@ -96,22 +96,48 @@ module tx_shift_register_tb();
         $display("PASS: Test Case 4 successful."); 
 
         //Test Case 5: 8 shifts later
-        @(negedge clk); 
-        
-
-        repeat (8) @(posedge clk); 
+        repeat (7) @(posedge clk); 
         #1; 
-        if (serial_out !== 1'b1) begin
-            $display("FAIL: Shift register should be all 1s. Test 5 unsuccessful."); 
+
+        if (dut.shift_reg !== 8'hFF) begin
+            $display("FAIL: Shift register should be all 1s after 8 shifts. Test 5 unsuccessful."); 
             $finish; 
         end 
         $display("PASS: Test Case 5 succesful"); 
 
-        //Test Case 6: Load, then consume and load together 
+        //Test Case 6: Load and shift together 
+        @(negedge clk); 
+        shift = 1'b1; 
+        load = 1'b1; 
+        data_in = 8'hA6; 
+        //load takes precedence 
+
+        @(posedge clk); 
+        #1; 
+         
+        if (serial_out !== 1'b0) begin 
+            $display("FAIL: Serial out has the wrong value. Load wins over shifting. Test 6 unsuccessful."); 
+            $finish; 
+        end 
+        $display("PASS: Test Case 6 successful"); 
         
 
-        //Test Case 7: Reset while full, with load, and consume high 
-    
+        //Test Case 7: Reset with load and shift
+        @(negedge clk); 
+        shift = 1'b1; 
+        load = 1'b1; 
+        data_in = 8'hA6; 
+        reset = 1'b1; 
+        //load takes precedence 
+
+        @(posedge clk); 
+        #1; 
+         
+        if (dut.shift_reg !== 8'hFF) begin 
+            $display("FAIL: Reset wins over loading and shifting. Test 6 unsuccessful."); 
+            $finish; 
+        end 
+        $display("PASS: Test Case 7 successful"); 
         
         // E. End the simulation.
         $finish;
