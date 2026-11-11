@@ -49,7 +49,7 @@ module tx_shift_register_tb();
         //Test Case 1: Asserting reset 
         @(posedge clk); 
         #1; 
-        if ((data_in !== 8'hFF) || (serial_out !== 1'b1)) begin 
+        if ((dut.shift_reg !== 8'hFF) || (serial_out !== 1'b1)) begin 
             $display("FAIL: Data out or serial out do not have the correct values. Test 1 unsuccessful."); 
             $finish; 
         end 
@@ -63,7 +63,7 @@ module tx_shift_register_tb();
 
         @(posedge clk); 
         #1; 
-        if (serial_out !== 1'b0)
+        if (serial_out !== 1'b0) begin 
             $display("FAIL: Serial out has the wrong value. Test 2 unsuccessful."); 
             $finish; 
         end 
@@ -85,26 +85,21 @@ module tx_shift_register_tb();
 
         //Test Case 4: Shift through the byte  
         @(negedge clk); 
-        data_in = 8'hA6; 
         shift = 1'b1;  
-        load = 1'b1; 
 
         @(posedge clk); 
         #1; 
-        if (serial_out !== {//Unsure of what to put here }) begin 
-            $display("FAIL: Data out should remain the same since transmitter is already full. Test 4 unsuccessful."); 
+        if (serial_out !== 1'b1) begin 
+            $display("FAIL: Serial out should be 1. Test 4 unsuccessful."); 
             $finish; 
         end 
         $display("PASS: Test Case 4 successful."); 
 
         //Test Case 5: 8 shifts later
         @(negedge clk); 
-        for (int i = 0; i < 1; i = i + 1) 
-            shift = 1'b1; 
-            shift = 1'b0; 
-        end
+        
 
-        @(posedge clk); 
+        repeat (8) @(posedge clk); 
         #1; 
         if (serial_out !== 1'b1) begin
             $display("FAIL: Shift register should be all 1s. Test 5 unsuccessful."); 
