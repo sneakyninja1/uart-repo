@@ -63,7 +63,7 @@ module tx_shift_register_tb();
 
         @(posedge clk); 
         #1; 
-        if ((serial_out !== 1'b0) || (serial_out !== 1'b0)) begin 
+        if ((dut.shift_reg !== 8'hA6) || (serial_out !== 1'b0)) begin 
             $display("FAIL: Serial out has the wrong value. Test 2 unsuccessful."); 
             $finish; 
         end 
@@ -77,7 +77,7 @@ module tx_shift_register_tb();
 
         @(posedge clk); 
         #1; 
-        if ((serial_out !== 1'b0) || (serial_out !== 1'b0)) begin 
+        if ((dut.shift_reg !== 8'hA6) || (serial_out !== 1'b0)) begin 
             $display("FAIL: Stored value should remain the same. Test 3 unsuccessful."); 
             $finish; 
         end 
@@ -141,24 +141,13 @@ module tx_shift_register_tb();
             $display("FAIL: Expected 1 after shift 7.");
             $finish;
         end 
-
-        @(posedge clk);  // Eigth shift happens here.
-        #1;             // Let the register and serial_out update.
-
-        if (serial_out !== 1'b1) begin
-            $display("FAIL: Expected 1 after shift 8.");
-            $finish;
-        end 
-
-
-
         $display("PASS: Test Case 4 successful."); 
 
         //Test Case 5: 8 shifts later
-        repeat (7) @(posedge clk); 
+        @(posedge clk); 
         #1; 
 
-        if (dut.shift_reg !== 8'hFF) begin
+        if ((dut.shift_reg !== 8'hFF) || (serial_out !== 1'b1)) begin
             $display("FAIL: Shift register should be all 1s after 8 shifts. Test 5 unsuccessful."); 
             $finish; 
         end 
@@ -174,7 +163,7 @@ module tx_shift_register_tb();
         @(posedge clk); 
         #1; 
          
-        if ((serial_out !== 1'b0) || (serial_out !== 1'b0)) begin 
+        if ((dut.shift_reg !== 8'hA6) || (serial_out !== 1'b0)) begin 
             $display("FAIL: Serial out has the wrong value. Load wins over shifting. Test 6 unsuccessful."); 
             $finish; 
         end 
@@ -187,7 +176,7 @@ module tx_shift_register_tb();
         load = 1'b1; 
         data_in = 8'hA6; 
         reset = 1'b1; 
-        //load takes precedence 
+        //Reset takes precedence 
 
         @(posedge clk); 
         #1; 
