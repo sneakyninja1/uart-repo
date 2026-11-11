@@ -63,7 +63,7 @@ module tx_shift_register_tb();
 
         @(posedge clk); 
         #1; 
-        if (serial_out !== 1'b0) begin 
+        if ((serial_out !== 1'b0) || (serial_out !== 1'b0)) begin 
             $display("FAIL: Serial out has the wrong value. Test 2 unsuccessful."); 
             $finish; 
         end 
@@ -77,7 +77,7 @@ module tx_shift_register_tb();
 
         @(posedge clk); 
         #1; 
-        if (serial_out !== 1'b0) begin 
+        if ((serial_out !== 1'b0) || (serial_out !== 1'b0)) begin 
             $display("FAIL: Stored value should remain the same. Test 3 unsuccessful."); 
             $finish; 
         end 
@@ -93,6 +93,65 @@ module tx_shift_register_tb();
             $display("FAIL: Serial out should be 1. Test 4 unsuccessful."); 
             $finish; 
         end 
+
+        @(posedge clk);  // Second shift happens here.
+        #1;             // Let the register and serial_out update.
+
+        if (serial_out !== 1'b1) begin
+            $display("FAIL: Expected 1 after shift 2.");
+            $finish;
+        end 
+
+        @(posedge clk);  // Third shift happens here.
+        #1;             // Let the register and serial_out update.
+
+        if (serial_out !== 1'b0) begin
+            $display("FAIL: Expected 0 after shift 3.");
+            $finish;
+        end 
+
+        @(posedge clk);  // Fourth shift happens here.
+        #1;             // Let the register and serial_out update.
+
+        if (serial_out !== 1'b0) begin
+            $display("FAIL: Expected 0 after shift 4.");
+            $finish;
+        end 
+
+        @(posedge clk);  // Fifth shift happens here.
+        #1;             // Let the register and serial_out update.
+
+        if (serial_out !== 1'b1) begin
+            $display("FAIL: Expected 1 after shift 5.");
+            $finish;
+        end 
+
+        @(posedge clk);  // Sixth shift happens here.
+        #1;             // Let the register and serial_out update.
+
+        if (serial_out !== 1'b0) begin
+            $display("FAIL: Expected 0 after shift 6.");
+            $finish;
+        end 
+
+        @(posedge clk);  // Seventh shift happens here.
+        #1;             // Let the register and serial_out update.
+
+        if (serial_out !== 1'b1) begin
+            $display("FAIL: Expected 1 after shift 7.");
+            $finish;
+        end 
+
+        @(posedge clk);  // Eigth shift happens here.
+        #1;             // Let the register and serial_out update.
+
+        if (serial_out !== 1'b1) begin
+            $display("FAIL: Expected 1 after shift 8.");
+            $finish;
+        end 
+
+
+
         $display("PASS: Test Case 4 successful."); 
 
         //Test Case 5: 8 shifts later
@@ -115,7 +174,7 @@ module tx_shift_register_tb();
         @(posedge clk); 
         #1; 
          
-        if (serial_out !== 1'b0) begin 
+        if ((serial_out !== 1'b0) || (serial_out !== 1'b0)) begin 
             $display("FAIL: Serial out has the wrong value. Load wins over shifting. Test 6 unsuccessful."); 
             $finish; 
         end 
@@ -134,7 +193,7 @@ module tx_shift_register_tb();
         #1; 
          
         if (dut.shift_reg !== 8'hFF) begin 
-            $display("FAIL: Reset wins over loading and shifting. Test 6 unsuccessful."); 
+            $display("FAIL: Reset wins over loading and shifting. Test 7 unsuccessful."); 
             $finish; 
         end 
         $display("PASS: Test Case 7 successful"); 
